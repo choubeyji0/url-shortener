@@ -1,17 +1,16 @@
-from app.routes.redirect import router as redirect_router
 from fastapi import FastAPI
 from app.routes.shorten import router as shorten_router
+from app.routes.redirect import router as redirect_router
 from app.database import Base, engine
 
-app = FastAPI()
+app = FastAPI(title="URL Shortener")
 
-if engine:
-    try:
-        Base.metadata.create_all(bind=engine)
-    except Exception as e:
-        print("DB error:", e)
+# Create all tables if they do not exist
+Base.metadata.create_all(bind=engine)
 
+# Register routes
 app.include_router(shorten_router)
+app.include_router(redirect_router)
 
 @app.get("/")
 def home():
