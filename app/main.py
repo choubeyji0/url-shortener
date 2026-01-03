@@ -1,11 +1,14 @@
 from fastapi import FastAPI
 from app.routes.shorten import router as shorten_router
 from app.database import Base, engine
-from app.models import URL
 
 app = FastAPI()
 
-Base.metadata.create_all(bind=engine)
+if engine:
+    try:
+        Base.metadata.create_all(bind=engine)
+    except Exception as e:
+        print("DB error:", e)
 
 app.include_router(shorten_router)
 
